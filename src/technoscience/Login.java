@@ -1,6 +1,6 @@
 package technoscience;
 
-import dbconnection.DBConnector;
+import dbconnector.DBConnector;
 import sun.applet.Main;
 
 import javax.swing.*;
@@ -52,22 +52,25 @@ public class Login {
     Statement stmt = null;
     ResultSet rs = null;
 
+    //call class for starting
+    DBConnector xampptest = new DBConnector();
+
     public void LoginSection() {
         pic = new JLabel(image);
         ladmin = new JLabel("Username");
-        ladmin.setFont(new Font("Serif", Font.BOLD + Font.ITALIC, 15));
+        ladmin.setFont(new Font("Tahoma", Font.PLAIN, 15));
         lusername = new JLabel("Registration Number");
-        lusername.setFont(new Font("Serif", Font.BOLD + Font.ITALIC, 15));
+        lusername.setFont(new Font("Tahoma", Font.PLAIN, 15));
         lpassword = new JLabel("Password");
-        lpassword.setFont(new Font("Serif", Font.BOLD + Font.ITALIC, 15));
+        lpassword.setFont(new Font("Tahoma", Font.PLAIN, 15));
         llogin = new JLabel("LOGIN");
-        llogin.setFont(new Font("Serif", Font.BOLD + Font.ITALIC, 25));
+        llogin.setFont(new Font("Tahoma", Font.BOLD, 25));
         llogin.setForeground(Color.BLUE);
 
         tusername = new JTextField(20);
-        tusername.setFont(new Font("Serif", Font.BOLD + Font.ITALIC, 15));
+        tusername.setFont(new Font("Tahoma", Font.PLAIN, 15));
         tpassword = new JPasswordField(20);
-        tpassword.setFont(new Font("Serif", Font.BOLD + Font.ITALIC, 15));
+        tpassword.setFont(new Font("Tahoma", Font.PLAIN, 15));
 
         String[] options = {"Login_Type", "Admin", "User"};
         ltype = new JComboBox<String>(options);
@@ -75,6 +78,7 @@ public class Login {
 //        ltype.addItem("Admin_Login");
 //        ltype.addItem("User_Login");
         ltype.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        ltype.setFont(new Font("Tahoma", Font.PLAIN, 13));
         //String type1 = String.valueOf(ltype.getSelectedItem());
         //type2 = ltype.getSelectedItem().toString();
         //int type1 = ltype.getSelectedIndex();
@@ -91,13 +95,13 @@ public class Login {
         });
 
         blogin = new JButton("Login");
-        blogin.setFont(new Font("Serif", Font.BOLD + Font.ITALIC, 18));
+        blogin.setFont(new Font("Tahoma", Font.BOLD, 18));
         blogin.setCursor(new Cursor(Cursor.HAND_CURSOR));
         blogin.setForeground(Color.GREEN.darker());
         blogin.setBackground(Color.lightGray);
         bforgot = new JButton("Forgot");
         bforgot.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        bforgot.setFont(new Font("Serif", Font.BOLD + Font.ITALIC, 18));
+        bforgot.setFont(new Font("Tahoma", Font.BOLD, 18));
         bforgot.setForeground(Color.BLUE);
         bforgot.setBackground(Color.lightGray);
 
@@ -154,6 +158,12 @@ public class Login {
         FLogin.setLocationRelativeTo(null);
         FLogin.setResizable(false);
         FLogin.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        FLogin.addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
+            public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+                xampptest.stopXampp();
+            }
+        });
 
         lusername.setVisible(false);
         ladmin.setVisible(true);
@@ -174,10 +184,10 @@ public class Login {
             //encripting passwords
             String Apass = tpassword.getText();
             String generatedPassword = null;
-            // Create MessageDigest instance for MD5
+            // Create MessageDigest instance for SHA-384
             MessageDigest md = null;
             try {
-                md = MessageDigest.getInstance("MD5");
+                md = MessageDigest.getInstance("SHA-384");
             } catch (NoSuchAlgorithmException e1) {
                 e1.printStackTrace();
             }
@@ -202,7 +212,7 @@ public class Login {
                     Connection con = DBConnector.getConnection();
                     if (con != null) {
                         if (Aname.equalsIgnoreCase("") && Apass.equalsIgnoreCase("")) {
-                            JOptionPane.showMessageDialog(null, "No Username/Password given", "Error Message", JOptionPane.ERROR_MESSAGE);
+                            JOptionPane.showMessageDialog(null, "No Username/Password given", "Notification", JOptionPane.WARNING_MESSAGE);
                         } else {
                             stmt = con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
                             String sql = "SELECT username,password FROM adminlogin WHERE username ='" + tusername.getText() + "' && password = '" + generatedPassword + "' ";
@@ -225,7 +235,7 @@ public class Login {
                                 stmt.close();
                                 con.close();
                             } else {
-                                JOptionPane.showMessageDialog(null, "Wrong Details", "Error Message", JOptionPane.ERROR_MESSAGE);
+                                JOptionPane.showMessageDialog(null, "Wrong Details", "Message", JOptionPane.WARNING_MESSAGE);
                                 rs.close();
                                 stmt.close();
                                 con.close();
@@ -246,7 +256,7 @@ public class Login {
                     Connection con = DBConnector.getConnection();
                     if (con != null) {
                         if (Aname.equalsIgnoreCase("") && Apass.equalsIgnoreCase("")) {
-                            JOptionPane.showMessageDialog(null, "No Username/Password given", "Error Message", JOptionPane.ERROR_MESSAGE);
+                            JOptionPane.showMessageDialog(null, "No Username/Password given", "Message", JOptionPane.WARNING_MESSAGE);
                         } else {
                             stmt = con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
                             String sql = "SELECT NationalID,password FROM userlogin WHERE NationalID ='" + ID + "' && password = '" + generatedPassword + "' ";
@@ -272,7 +282,7 @@ public class Login {
                                 stmt.close();
                                 con.close();
                             } else {
-                                JOptionPane.showMessageDialog(null, "Wrong Details", "Error Message", JOptionPane.ERROR_MESSAGE);
+                                JOptionPane.showMessageDialog(null, "Wrong Details", "Message", JOptionPane.WARNING_MESSAGE);
                                 rs.close();
                                 stmt.close();
                                 con.close();
@@ -303,7 +313,7 @@ public class Login {
                     msell.bedit.setVisible(true);
                     msell.bselluser.setVisible(false);
                 } else {
-                    JOptionPane.showMessageDialog(null, "Please Choose Login Type", "Error Message", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(null, "Please Choose Login Type", "Error Message", JOptionPane.WARNING_MESSAGE);
                 }
             }
         });

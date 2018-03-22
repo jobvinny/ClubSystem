@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 4.7.0
+-- version 4.7.4
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 02, 2017 at 05:57 PM
--- Server version: 10.1.22-MariaDB
--- PHP Version: 7.1.4
+-- Generation Time: Mar 22, 2018 at 03:37 PM
+-- Server version: 10.1.29-MariaDB
+-- PHP Version: 7.2.0
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET AUTOCOMMIT = 0;
@@ -40,7 +40,7 @@ CREATE TABLE `adminlogin` (
 --
 
 INSERT INTO `adminlogin` (`NationalID`, `username`, `personalnumber`, `password`) VALUES
-(31407936, 'techguy', '1234', '93f725a07423fe1c889f448b33d21f46');
+(12345678, 'techguy', '6668', 'c53253f25296a5c5c3c869c57ffc9b483b989184bec97a06da75f0dae08b429957c3b570d0c2b603f57e9df7fa73360d');
 
 -- --------------------------------------------------------
 
@@ -67,9 +67,14 @@ CREATE TABLE `servicetable` (
 --
 
 INSERT INTO `servicetable` (`sname`, `rnumber`, `stype`, `cost`, `Tquantity`, `Tcost`, `sprovider`, `CashPaid`, `ChangePaid`, `LastEdited`, `Invoice`) VALUES
-('TechGyal', 'EB1...', 'OS Installation', 200, 1, 200, 'php', 200, 0, 'Thursday, 19 October 2017, 12:34:37.393 AM', '-1355759297'),
-('TechGuy', 'EB3/17613/14', 'Network Card', 150, 2, 300, 'Jarvis', 500, 200, 'Thursday, 19 October 2017, 12:33:15.004 AM', '1112030698'),
-('rgr', 'rggr', 'Application Sofware', 100, 1, 100, 'rgrg', 1000, 900, 'Saturday, 28 October 2017, 04:35:50.331 PM', '-1137105660');
+('vincent', 'eb3/17613/14', 'OS Installation', 200, 2, 100, 'tech', 500, 100, 'Thursday, 12 October 2017, 03:09:09.762 AM', '-696513712'),
+('techguy', 'eb1', 'Blowing', 50, 5, 250, 'mercy', 300, 50, 'Thursday, 12 October 2017, 03:24:43.984 AM', '1421221339'),
+('ereber', 'brbtr', 'Blowing[Inside]', 150, 4, 600, 'brrrtb', 600, 0, 'Thursday, 12 October 2017, 03:28:02.213 AM', '-1391438665'),
+('th', 'nun', 'Blowing[Inside]', 150, 2, 300, 'unnu', 500, 200, 'Thursday, 12 October 2017, 03:30:56.874 AM', '-2102760368'),
+('greg', 'rger', 'OS Installation', 200, 4, 800, 'erge', 2453, 1653, 'Thursday, 12 October 2017, 03:34:24.276 AM', '-470626656'),
+('df', 'bfb', 'OS Installation', 200, 2, 400, 'jay', 500, 100, 'Thursday, 12 October 2017, 08:00:49.128 AM', '135990597'),
+('java', 'java', 'Taking Setups', 200, 4, 800, 'java', 1000, 200, 'Sunday, 28 January 2018, 05:49:00.970 PM', '907598983'),
+('', '', 'Network Configuration', 50, 3232, 161600, '', 3232232, 3070632, 'Thursday, 22 March 2018, 05:35:32.141 PM', '-758206242');
 
 -- --------------------------------------------------------
 
@@ -101,12 +106,6 @@ INSERT INTO `userlogin` (`NationalID`, `username`, `personalnumber`, `password`)
 ALTER TABLE `adminlogin`
   ADD PRIMARY KEY (`NationalID`),
   ADD UNIQUE KEY `personalnumber` (`personalnumber`);
-
---
--- Indexes for table `servicetable`
---
-ALTER TABLE `servicetable`
-  ADD PRIMARY KEY (`rnumber`);
 
 --
 -- Indexes for table `userlogin`

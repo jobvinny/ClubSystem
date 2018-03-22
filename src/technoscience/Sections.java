@@ -1,7 +1,6 @@
 package technoscience;
 
-import com.toedter.calendar.JDateChooser;
-import dbconnection.DBConnector;
+import dbconnector.DBConnector;
 import sun.applet.Main;
 
 import javax.swing.*;
@@ -9,7 +8,6 @@ import javax.swing.border.TitledBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.text.DefaultCaret;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -109,6 +107,9 @@ public class Sections {
     Random randserial = new Random();
     int numserial = randserial.nextInt();
 
+    //start xampp application
+    DBConnector startdb = new DBConnector();
+
     //method for cancelling
     private void canacelaction() {
         tsname.setText("");
@@ -144,8 +145,7 @@ public class Sections {
             prs.close();
             con.close();
         } catch (SQLException x) {
-            JOptionPane.showMessageDialog(null, "Connection Failure" + "\n" + x, "Error Message", JOptionPane.ERROR_MESSAGE);
-            //System.exit(0);
+            startdb.getCon();
         } finally {
 
             Connection con = null;
@@ -208,8 +208,7 @@ public class Sections {
                 con.close();
             }
         } catch (SQLException x) {
-            JOptionPane.showMessageDialog(null, "Connection Failure" + "\n" + x, "Database Message", JOptionPane.ERROR_MESSAGE);
-            //System.exit(0);
+            startdb.getCon();
         }
     }
 
@@ -261,8 +260,7 @@ public class Sections {
                 con.close();
             }
         } catch (SQLException x) {
-            JOptionPane.showMessageDialog(null, "Connection Failure" + "\n" + x, "Database Message", JOptionPane.ERROR_MESSAGE);
-            //System.exit(0);
+            startdb.getCon();
         }
     }
 
@@ -319,8 +317,7 @@ public class Sections {
                     con.close();
                 }
             } catch (SQLException x) {
-                JOptionPane.showMessageDialog(null, "Connection Failure" + "\n" + x, "Database Message", JOptionPane.ERROR_MESSAGE);
-                //System.exit(0);
+                startdb.getCon();
             }
         }
     }
@@ -379,12 +376,10 @@ public class Sections {
                             analyzingdata();
                             uplaod();
                         } catch (SQLException e) {
-                            JOptionPane.showMessageDialog(null, "Connection Failure" + "\n" + e, "Database Message", JOptionPane.ERROR_MESSAGE);
-                            //System.exit(0);
+                           startdb.getCon();
                         }
                     } else {
-                        JOptionPane.showMessageDialog(null, "Service Cancelled Successfully", "Techno Confirmation", JOptionPane.INFORMATION_MESSAGE, newIcon);
-                        canacelaction();
+                        startdb.getCon();
                     }
                 }
             }
@@ -402,13 +397,13 @@ public class Sections {
             double costfound = rs.getDouble("TCOST");
             tdcost.setText(String.format("%.2f", costfound));
         } catch (SQLException e) {
-            JOptionPane.showMessageDialog(null, "Connection Failure" + "\n" + e, "Database Message", JOptionPane.ERROR_MESSAGE);
-            //System.exit(0);
+            startdb.getCon();
         }
     }
 
     public void repairmode() {
         table = new JTable();
+        table.setFont(new Font("Tahoma", Font.PLAIN, 13));
         // this enables horizontal scroll bar
         table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
@@ -424,60 +419,60 @@ public class Sections {
         lselllogo = new JLabel(imageselllogo);
 
         lsellpoint = new JLabel("SERVICE DESK");
-        lsellpoint.setFont(new Font("Serif", Font.BOLD + Font.ITALIC, 12));
+        lsellpoint.setFont(new Font("Tahoma", Font.BOLD, 12));
         lsname = new JLabel("Client Name");
-        lsname.setFont(new Font("Serif", Font.BOLD + Font.ITALIC, 12));
+        lsname.setFont(new Font("Tahoma", Font.PLAIN, 12));
         lrnumber = new JLabel("Registration Number");
-        lrnumber.setFont(new Font("Serif", Font.BOLD + Font.ITALIC, 12));
-        lcost = new JLabel("Cost [KSH]");
-        lcost.setFont(new Font("Serif", Font.BOLD + Font.ITALIC, 12));
+        lrnumber.setFont(new Font("Tahoma", Font.PLAIN, 12));
+        lcost = new JLabel("[KES] Cost");
+        lcost.setFont(new Font("Tahoma", Font.PLAIN, 12));
         lquantity = new JLabel("Quantity");
-        lquantity.setFont(new Font("Serif", Font.BOLD + Font.ITALIC, 12));
-        ltcost = new JLabel("Total Cost");
-        ltcost.setFont(new Font("Serif", Font.BOLD + Font.ITALIC, 12));
-        lpaid = new JLabel("Cash Paid");
-        lpaid.setFont(new Font("Serif", Font.BOLD + Font.ITALIC, 12));
-        lchange = new JLabel("Change");
-        lchange.setFont(new Font("Serif", Font.BOLD + Font.ITALIC, 12));
+        lquantity.setFont(new Font("Tahoma", Font.PLAIN, 12));
+        ltcost = new JLabel("[KES] Total Cost");
+        ltcost.setFont(new Font("Tahoma", Font.PLAIN, 12));
+        lpaid = new JLabel("[KES] Cash Paid");
+        lpaid.setFont(new Font("Tahoma", Font.PLAIN, 12));
+        lchange = new JLabel("[KES] Change");
+        lchange.setFont(new Font("Tahoma", Font.PLAIN, 12));
         lprovider = new JLabel("Techno Expert");
-        lprovider.setFont(new Font("Serif", Font.BOLD + Font.ITALIC, 12));
-        dcost = new JLabel("Total Cost [KSH]");
-        dcost.setFont(new Font("Serif", Font.BOLD + Font.ITALIC, 12));
+        lprovider.setFont(new Font("Tahoma", Font.PLAIN, 12));
+        dcost = new JLabel("[KES] Total Cost");
+        dcost.setFont(new Font("Tahoma", Font.PLAIN, 12));
         linvoice = new JLabel("Enter Invoice");
-        linvoice.setFont(new Font("Serif", Font.BOLD + Font.ITALIC, 12));
-        upcost = new JLabel("Enter Cost");
-        upcost.setFont(new Font("Serif", Font.BOLD + Font.ITALIC, 12));
+        linvoice.setFont(new Font("Tahoma", Font.PLAIN, 12));
+        upcost = new JLabel("[KES] Enter Cost");
+        upcost.setFont(new Font("Tahoma", Font.PLAIN, 12));
 
         tsname = new JTextField(20);
-        tsname.setFont(new Font("Serif", Font.BOLD + Font.ITALIC, 15));
+        tsname.setFont(new Font("Tahoma", Font.PLAIN, 15));
         tlinvoice = new JTextField(20);
-        tlinvoice.setFont(new Font("Serif", Font.BOLD + Font.ITALIC, 15));
+        tlinvoice.setFont(new Font("Tahoma", Font.PLAIN, 15));
         tupcost = new JTextField(20);
-        tupcost.setFont(new Font("Serif", Font.BOLD + Font.ITALIC, 15));
+        tupcost.setFont(new Font("Tahoma", Font.PLAIN, 15));
         trnumber = new JTextField(20);
-        trnumber.setFont(new Font("Serif", Font.BOLD + Font.ITALIC, 15));
+        trnumber.setFont(new Font("Tahoma", Font.PLAIN, 15));
         tprovider = new JTextField(20);
-        tprovider.setFont(new Font("Serif", Font.BOLD + Font.ITALIC, 15));
+        tprovider.setFont(new Font("Tahoma", Font.PLAIN, 15));
         tcost = new JTextField(20);
-        tcost.setFont(new Font("Serif", Font.BOLD + Font.ITALIC, 15));
+        tcost.setFont(new Font("Tahoma", Font.PLAIN, 15));
         tquantity = new JTextField(20);
-        tquantity.setFont(new Font("Serif", Font.BOLD + Font.ITALIC, 15));
+        tquantity.setFont(new Font("Tahoma", Font.PLAIN, 15));
         ttcost = new JTextField(20);
-        ttcost.setFont(new Font("Serif", Font.BOLD + Font.ITALIC, 15));
+        ttcost.setFont(new Font("Tahoma", Font.PLAIN, 15));
         ttcost.setEditable(false);
         ttcost.setBackground(Color.LIGHT_GRAY);
         tpaid = new JTextField(20);
-        tpaid.setFont(new Font("Serif", Font.BOLD + Font.ITALIC, 15));
+        tpaid.setFont(new Font("Tahoma", Font.PLAIN, 15));
         tchange = new JTextField(20);
-        tchange.setFont(new Font("Serif", Font.BOLD + Font.ITALIC, 15));
+        tchange.setFont(new Font("Tahoma", Font.PLAIN, 15));
         tchange.setEditable(false);
         tchange.setBackground(Color.LIGHT_GRAY);
         tdcost = new JTextField(20);
-        tdcost.setFont(new Font("Serif", Font.BOLD + Font.ITALIC, 15));
+        tdcost.setFont(new Font("Tahoma", Font.PLAIN, 15));
         tdcost.setEditable(false);
         tdcost.setBackground(Color.LIGHT_GRAY);
         tsearch = new JTextField(21);
-        tsearch.setFont(new Font("Serif", Font.BOLD + Font.ITALIC, 15));
+        tsearch.setFont(new Font("Tahoma", Font.PLAIN, 15));
         tsearch.setToolTipText("Search");
 
         //combobox for names
@@ -531,7 +526,7 @@ public class Sections {
         bedit.setBackground(Color.LIGHT_GRAY);
         bedit.setToolTipText("Edit Data");
         bedit.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        bedit.setFont(new Font("Serif", Font.BOLD + Font.ITALIC, 12));
+        bedit.setFont(new Font("Tahoma", Font.BOLD, 12));
         bsearch = new JButton(imagesearch);
         bsearch.setBackground(Color.LIGHT_GRAY);
         bsearch.setToolTipText("Search Client");
@@ -549,19 +544,19 @@ public class Sections {
         bcancel.setToolTipText("Cancel/Reload");
         bcancel.setCursor(new Cursor(Cursor.HAND_CURSOR));
         bback = new JButton("BACK");
-        bback.setFont(new Font("Serif", Font.BOLD + Font.ITALIC, 12));
+        bback.setFont(new Font("Tahoma", Font.BOLD, 12));
         bback.setBackground(Color.LIGHT_GRAY);
         bback.setCursor(new Cursor(Cursor.HAND_CURSOR));
         bbacksell = new JButton("LOGOUT");
-        bbacksell.setFont(new Font("Serif", Font.BOLD + Font.ITALIC, 15));
+        bbacksell.setFont(new Font("Tahoma", Font.BOLD, 15));
         bbacksell.setBackground(Color.LIGHT_GRAY);
         bbacksell.setCursor(new Cursor(Cursor.HAND_CURSOR));
         brefresh = new JButton("REFRESH");
-        brefresh.setFont(new Font("Serif", Font.BOLD + Font.ITALIC, 15));
+        brefresh.setFont(new Font("Tahoma", Font.BOLD, 15));
         brefresh.setBackground(Color.GREEN);
         brefresh.setCursor(new Cursor(Cursor.HAND_CURSOR));
         brefreshadmin = new JButton("REFRESH");
-        brefreshadmin.setFont(new Font("Serif", Font.BOLD + Font.ITALIC, 15));
+        brefreshadmin.setFont(new Font("Tahoma", Font.BOLD, 15));
         brefreshadmin.setBackground(Color.GREEN);
         brefreshadmin.setCursor(new Cursor(Cursor.HAND_CURSOR));
         bdelete = new JButton(imagedelete);
@@ -583,7 +578,7 @@ public class Sections {
         v.gridy = 0;
         paneltable.add(bbacksell, v);
         v.anchor = GridBagConstraints.EAST;
-        v.insets = new Insets(0, 0, 0, 320);
+        v.insets = new Insets(0, 0, 0, 340);
         paneltable.add(boxdrugname, v);
         v.insets = new Insets(0, 110, 0, 53);
         paneltable.add(tsearch, v);
@@ -982,8 +977,7 @@ public class Sections {
                     }
                 }
             } catch (SQLException x) {
-                JOptionPane.showMessageDialog(null, "Connection Failure" + "\n" + x, "Error Message", JOptionPane.ERROR_MESSAGE);
-                //System.exit(0);
+                startdb.getCon();
             }
 
         });
@@ -1022,8 +1016,7 @@ public class Sections {
                     }
                 }
             } catch (SQLException x) {
-                JOptionPane.showMessageDialog(null, "Connection Failure" + "\n" + x, "Error Message", JOptionPane.ERROR_MESSAGE);
-                //System.exit(0);
+                startdb.getCon();
             }
 
         });

@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="TechnoScience">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/dist/TechnoScience.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

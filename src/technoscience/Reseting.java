@@ -1,6 +1,6 @@
 package technoscience;
 
-import dbconnection.DBConnector;
+import dbconnector.DBConnector;
 import sun.applet.Main;
 
 import javax.swing.*;
@@ -51,35 +51,38 @@ public class Reseting {
     ResultSet rs = null;
     PreparedStatement prs = null;
 
+    //call class for starting
+    DBConnector xampptest = new DBConnector();
+
     public void ResetingSection() {
         lpic = new JLabel(image);
         linfo = new JLabel("Reset Password");
-        linfo.setFont(new Font("Serif", Font.BOLD + Font.ITALIC, 12));
+        linfo.setFont(new Font("Tahoma", Font.BOLD, 12));
         linfo.setForeground(Color.BLUE);
         lid = new JLabel("National ID");
-        lid.setFont(new Font("Serif", Font.BOLD + Font.ITALIC, 15));
+        lid.setFont(new Font("Tahoma", Font.PLAIN, 15));
         lpnumber = new JLabel("Registration Number");
-        lpnumber.setFont(new Font("Serif", Font.BOLD + Font.ITALIC, 15));
+        lpnumber.setFont(new Font("Tahoma", Font.PLAIN, 15));
         lpass = new JLabel("Password");
-        lpass.setFont(new Font("Serif", Font.BOLD + Font.ITALIC, 15));
+        lpass.setFont(new Font("Tahoma", Font.PLAIN, 15));
         lconfirm = new JLabel("Confirm Password");
-        lconfirm.setFont(new Font("Serif", Font.BOLD + Font.ITALIC, 15));
+        lconfirm.setFont(new Font("Tahoma", Font.PLAIN, 15));
 
         tid = new JTextField(20);
-        tid.setFont(new Font("Serif", Font.BOLD + Font.ITALIC, 15));
+        tid.setFont(new Font("Tahoma", Font.PLAIN, 15));
         tpnumber = new JTextField(20);
-        tpnumber.setFont(new Font("Serif", Font.BOLD + Font.ITALIC, 15));
+        tpnumber.setFont(new Font("Tahoma", Font.PLAIN, 15));
         ppass = new JPasswordField(20);
-        ppass.setFont(new Font("Serif", Font.BOLD + Font.ITALIC, 15));
+        ppass.setFont(new Font("Tahoma", Font.PLAIN, 15));
         pconfirm = new JPasswordField(20);
-        pconfirm.setFont(new Font("Serif", Font.BOLD + Font.ITALIC, 15));
+        pconfirm.setFont(new Font("Tahoma", Font.PLAIN, 15));
 
         String[] resetype = {"Reset Type", "Admin Reset", "User Reset"};
         ltype2 = new JComboBox(resetype);
 //        ltype2.addItem("Admin Reset");
 //        ltype2.addItem("User Reset");
         ltype2.setCursor(new Cursor(Cursor.HAND_CURSOR));
-
+        ltype2.setFont(new Font("Tahoma", Font.PLAIN, 13));
         ltype2.addActionListener(new ActionListener() {
 
             @Override
@@ -167,6 +170,12 @@ public class Reseting {
         FReset.setLocationRelativeTo(null);
         FReset.setResizable(false);
         FReset.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        FReset.addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
+            public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+                xampptest.stopXampp();
+            }
+        });
 
         bcancel.addActionListener(e -> {
             FReset.setVisible(false);
@@ -182,10 +191,10 @@ public class Reseting {
             //encripting passwords
             String pass1 = ppass.getText();
             String generatedPassword = null;
-            // Create MessageDigest instance for MD5
+            // Create MessageDigest instance for SHA-384
             MessageDigest md = null;
             try {
-                md = MessageDigest.getInstance("MD5");
+                md = MessageDigest.getInstance("SHA-384");
             } catch (NoSuchAlgorithmException e1) {
                 e1.printStackTrace();
             }
@@ -212,97 +221,106 @@ public class Reseting {
                     Connection con = DBConnector.getConnection();
                     if (con != null) {
                         if (nid.equalsIgnoreCase("") && pnum.equalsIgnoreCase("") && pass1.equalsIgnoreCase("") && pass2.equalsIgnoreCase("")) {
-                            JOptionPane.showMessageDialog(null, "Please Fill In The Fields", "Error Message", JOptionPane.ERROR_MESSAGE);
+                            JOptionPane.showMessageDialog(null, "Please Fill In The Fields", "Notification", JOptionPane.WARNING_MESSAGE);
                         } else {
-                            stmt = con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-                            String sql = "SELECT NationalID,personalnumber FROM adminlogin WHERE NationalID ='" + ID + "' &&  personalnumber = '" + tpnumber.getText() + "' ";
-                            rs = stmt.executeQuery(sql);
-                            if (rs.next()) {
-                                if (ppass.getText().equalsIgnoreCase(pconfirm.getText())) {
-                                    String sqlupdate = "UPDATE adminlogin set password = '" + generatedPassword + "' WHERE NationalID ='" + ID + "'";
-                                    prs = con.prepareStatement(sqlupdate);
-                                    prs.execute();
-                                    if (prs != null) {
-                                        JOptionPane.showMessageDialog(null, "Password Updated Successfully", "Notification", JOptionPane.INFORMATION_MESSAGE);
-                                        FReset.setVisible(false);
-                                        Login r2 = new Login();
-                                        r2.LoginSection();
-                                        rs.close();
-                                        stmt.close();
-                                        con.close();
-                                        prs.close();
+                            if(pass1.length() < 8 || pass2.length() < 8){
+                                JOptionPane.showMessageDialog(null, "You must have 8 characters in your password", "Password Validation", JOptionPane.WARNING_MESSAGE);
+                            }else {
+                                stmt = con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+                                String sql = "SELECT NationalID,personalnumber FROM adminlogin WHERE NationalID ='" + ID + "' &&  personalnumber = '" + tpnumber.getText() + "' ";
+                                rs = stmt.executeQuery(sql);
+                                if (rs.next()) {
+                                    if (ppass.getText().equalsIgnoreCase(pconfirm.getText())) {
+                                        String sqlupdate = "UPDATE adminlogin set password = '" + generatedPassword + "' WHERE NationalID ='" + ID + "'";
+                                        prs = con.prepareStatement(sqlupdate);
+                                        prs.execute();
+                                        if (prs != null) {
+                                            JOptionPane.showMessageDialog(null, "Password Updated Successfully", "Notification", JOptionPane.INFORMATION_MESSAGE);
+                                            FReset.setVisible(false);
+                                            Login r2 = new Login();
+                                            r2.LoginSection();
+                                            rs.close();
+                                            stmt.close();
+                                            con.close();
+                                            prs.close();
+                                        } else {
+                                            JOptionPane.showMessageDialog(null, "Password Not Updated", "Notification", JOptionPane.INFORMATION_MESSAGE);
+                                            rs.close();
+                                            stmt.close();
+                                            con.close();
+                                            prs.close();
+                                        }
                                     } else {
-                                        JOptionPane.showMessageDialog(null, "Password Not Updated", "Error Message", JOptionPane.ERROR_MESSAGE);
-                                        rs.close();
-                                        stmt.close();
-                                        con.close();
-                                        prs.close();
+                                        JOptionPane.showMessageDialog(null, "Password don't Match\nRecheck and try again", "Password Validation", JOptionPane.WARNING_MESSAGE);
                                     }
                                 } else {
-                                    JOptionPane.showMessageDialog(null, "Password don't Match", "Error Message", JOptionPane.ERROR_MESSAGE);
+                                    JOptionPane.showMessageDialog(null, "Wrong National ID or Registration_No\nPlease recheck and try again", "Reset Notification", JOptionPane.WARNING_MESSAGE);
+                                    rs.close();
+                                    stmt.close();
+                                    con.close();
                                 }
-                            } else {
-                                JOptionPane.showMessageDialog(null, "Wrong National ID or Personal_Number/PIN", "Error Message", JOptionPane.ERROR_MESSAGE);
-                                rs.close();
-                                stmt.close();
-                                con.close();
                             }
                         }
                     } else {
-                        JOptionPane.showMessageDialog(null, "Connection Failure", "Error Message", JOptionPane.ERROR_MESSAGE);
+                        xampptest.getCon();
                     }
                 } catch (SQLException x) {
-                    JOptionPane.showMessageDialog(null, "Connection Failure" + "\n" + x, "Error Message", JOptionPane.ERROR_MESSAGE);
+                    xampptest.getCon();
                 }
             } else if (type3.equalsIgnoreCase(usertype)) {
                 try {
                     Connection con = DBConnector.getConnection();
                     if (con != null) {
                         if (nid.equalsIgnoreCase("") && pnum.equalsIgnoreCase("") && pass1.equalsIgnoreCase("") && pass2.equalsIgnoreCase("")) {
-                            JOptionPane.showMessageDialog(null, "Please Fill In The Fields", "Error Message", JOptionPane.ERROR_MESSAGE);
+                            JOptionPane.showMessageDialog(null, "Please Fill In The Fields", "Notification", JOptionPane.WARNING_MESSAGE);
                         } else {
-                            stmt = con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-                            String sql = "SELECT NationalID,personalnumber FROM userlogin WHERE NationalID ='" + ID + "' &&  personalnumber = '" + tpnumber.getText() + "' ";
-                            rs = stmt.executeQuery(sql);
-                            if (rs.next()) {
-                                if (ppass.getText().equalsIgnoreCase(pconfirm.getText())) {
-                                    String sqlupdate = "UPDATE userlogin set password = '" + generatedPassword + "' WHERE NationalID ='" + ID + "'";
-                                    prs = con.prepareStatement(sqlupdate);
-                                    prs.execute();
-                                    if (prs != null) {
-                                        JOptionPane.showMessageDialog(null, "Password Updated Successfully", "Notification", JOptionPane.INFORMATION_MESSAGE);
-                                        FReset.setVisible(false);
-                                        Login r2 = new Login();
-                                        r2.LoginSection();
-                                        rs.close();
-                                        stmt.close();
-                                        con.close();
-                                        prs.close();
+                            if(pass1.length() < 8 || pass2.length() < 8){
+                                JOptionPane.showMessageDialog(null, "You must have 8 characters in your password", "Password Validation", JOptionPane.WARNING_MESSAGE);
+                            }else {
+                                stmt = con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+                                String sql = "SELECT NationalID,personalnumber FROM userlogin WHERE NationalID ='" + ID + "' &&  personalnumber = '" + tpnumber.getText() + "' ";
+                                rs = stmt.executeQuery(sql);
+                                if (rs.next()) {
+                                    if (ppass.getText().equalsIgnoreCase(pconfirm.getText())) {
+                                        String sqlupdate = "UPDATE userlogin set password = '" + generatedPassword + "' WHERE NationalID ='" + ID + "'";
+                                        prs = con.prepareStatement(sqlupdate);
+                                        prs.execute();
+                                        if (prs != null) {
+                                            JOptionPane.showMessageDialog(null, "Password Updated Successfully", "Notification", JOptionPane.INFORMATION_MESSAGE);
+                                            FReset.setVisible(false);
+                                            Login r2 = new Login();
+                                            r2.LoginSection();
+                                            rs.close();
+                                            stmt.close();
+                                            con.close();
+                                            prs.close();
+                                        } else {
+                                            JOptionPane.showMessageDialog(null, "Password Not Updated", "Notification", JOptionPane.INFORMATION_MESSAGE);
+                                            rs.close();
+                                            stmt.close();
+                                            con.close();
+                                            prs.close();
+                                        }
                                     } else {
-                                        JOptionPane.showMessageDialog(null, "Password Not Updated", "Error Message", JOptionPane.ERROR_MESSAGE);
-                                        rs.close();
-                                        stmt.close();
-                                        con.close();
-                                        prs.close();
+                                        JOptionPane.showMessageDialog(null, "Password don't Match\nRecheck and try again", "Password Validation", JOptionPane.WARNING_MESSAGE);
                                     }
                                 } else {
-                                    JOptionPane.showMessageDialog(null, "Password don't Match", "Error Message", JOptionPane.ERROR_MESSAGE);
+                                    JOptionPane.showMessageDialog(null, "Wrong National ID or Registration_No\nPlease recheck and try again", "Reset Notification", JOptionPane.WARNING_MESSAGE);
+                                    rs.close();
+                                    stmt.close();
+                                    con.close();
                                 }
-                            } else {
-                                JOptionPane.showMessageDialog(null, "Wrong National ID or Personal_Number", "Error Message", JOptionPane.ERROR_MESSAGE);
-                                rs.close();
-                                stmt.close();
-                                con.close();
                             }
                         }
                     } else {
-                        JOptionPane.showMessageDialog(null, "Connection Failure", "Error Message", JOptionPane.ERROR_MESSAGE);
-                        System.exit(0);
+                        xampptest.getCon();
                     }
                 } catch (SQLException x) {
-                    JOptionPane.showMessageDialog(null, "Connection Failure" + "\n" + x, "Error Message", JOptionPane.ERROR_MESSAGE);
-                    //System.exit(0);
+                    xampptest.getCon();
                 }
+            } else if (type3.equalsIgnoreCase("Choose Reset Type") || type3 == null) {
+                Toolkit.getDefaultToolkit().beep();
+                JOptionPane.showMessageDialog(null, "Please Choose The Reset Type", "Notification", JOptionPane.INFORMATION_MESSAGE);
             }
         });
     }

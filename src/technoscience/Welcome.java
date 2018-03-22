@@ -5,15 +5,9 @@
  */
 package technoscience;
 
-import dbconnection.DBConnector;
+import dbconnector.DBConnector;
 
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Image;
-import java.awt.Insets;
+import java.awt.*;
 import java.net.URL;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -51,9 +45,43 @@ public class Welcome {
     JFrame Floadingbar;
     int num = 0;
 
+    //start xampp application
+    DBConnector startdb = new DBConnector();
+
+    //check on starting status of xampp
+    private void stateXampp() {
+        try {
+            Connection con = DBConnector.getConnection();
+            if (con != null) {
+                //do nothing
+                System.out.println("do nothing");
+            } else {
+                startdb.startXampp();
+            }
+        } catch (SQLException bv) {
+            startdb.startXampp();
+        }
+    }
+
+    //try connetion
+    private void trycon() {
+        notify4.setForeground(Color.red.darker());
+        Toolkit.getDefaultToolkit().beep();
+        String[] option = {"Retry", "Exit"};
+        int dbstate = JOptionPane.showOptionDialog(null, "Connection Failure\nRetry Starting The Database Application", "Database Connection Notification", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, option, option[1]);
+        if (dbstate == 0) {
+            //start xampp
+            startdb.startXampp();
+            current.setForeground(Color.BLUE);
+        }
+        if (dbstate == 1) {
+            System.exit(0);
+        }
+    }
+
     private void LoadingBar() {
         notify = new JLabel("Loading System Modules...");
-        notify.setFont(new Font("Serif", Font.BOLD + Font.ITALIC, 12));
+        notify.setFont(new Font("Tahoma", Font.BOLD + Font.ITALIC, 12));
         notify.setForeground(Color.BLUE);
         notify2 = new JLabel("Establishing Database Connection...");
         notify2.setFont(new Font("Serif", Font.BOLD + Font.ITALIC, 12));
@@ -65,10 +93,10 @@ public class Welcome {
         notify4.setFont(new Font("Serif", Font.BOLD + Font.ITALIC, 12));
         notify4.setForeground(Color.BLUE);
         slogan = new JLabel("Technologie Pour Change");
-        slogan.setFont(new Font("Serif", Font.BOLD + Font.ITALIC, 10));
+        slogan.setFont(new Font("Tahoma", Font.BOLD, 10));
         slogan.setForeground(Color.BLACK);
         pwby = new JLabel("Powered By TechnoScience");
-        pwby.setFont(new Font("Serif", Font.BOLD + Font.ITALIC, 12));
+        pwby.setFont(new Font("Tahoma", Font.BOLD, 12));
         pwby.setForeground(Color.BLACK);
         splashimg = new JLabel(image4);
 
@@ -105,7 +133,7 @@ public class Welcome {
         v.insets = new Insets(10, 0, 0, 10);
         v.gridy++;
         panelbar.add(slogan, v);
-        v.insets = new Insets(0, 0, 2, 10);
+        v.insets = new Insets(0, 0, 4, 10);
         v.gridy++;
         panelbar.add(pwby, v);
         panelbar.setBackground(Color.lightGray);
@@ -113,7 +141,7 @@ public class Welcome {
         while (num < 2000) {
             current.setValue(num);
             try {
-                Thread.sleep(1000);
+                Thread.sleep(70);
             } catch (InterruptedException e) {
             }
             num += 95;
@@ -141,24 +169,31 @@ public class Welcome {
                 Floadingbar.setBackground(Color.black);
                 //end of frame code
             }
+            if (num == 190) {
+                stateXampp();
+            }
+            if (num == 380) {
+                stateXampp();
+            }
             if (num == 950) {
-//                notify.setVisible(false);
-//                notify2.setVisible(true);
-//                notify3.setVisible(false);
-//                notify4.setVisible(false);
+                stateXampp();
             }
             if (num == 1425) {
                 try {
-                    Connection con = DBConnector.getConnection();
-                } catch (SQLException e) {
-//                    notify.setVisible(false);
-//                    notify2.setVisible(false);
-//                    notify3.setVisible(false);
-//                    notify4.setVisible(true);
-                    notify4.setForeground(Color.red);
+                    try {
+                        Connection con = DBConnector.getConnection();
+                    } catch (SQLException e) {
+                        startdb.startXampp();
+                        try {
+                            Connection con = DBConnector.getConnection();
+                        } catch (SQLException ee) {
+                            startdb.startXampp();
+                            stateXampp();
+                        }
+                    }
+                } catch (Exception trydb) {
                     current.setForeground(Color.red.darker());
-                    JOptionPane.showMessageDialog(null, "Connection Failure" + "\n" + "Please Check If The Database Application Is Running", "Database Connection Notification", JOptionPane.ERROR_MESSAGE, icon2);
-                    System.exit(0);
+                    trycon();
                 }
             }
             if (num == 1615) {
@@ -176,17 +211,18 @@ public class Welcome {
                         r2.LoginSection();
                         con.close();
                     } else {
-                        JOptionPane.showMessageDialog(null, "Connection Failure", "Error Message", JOptionPane.ERROR_MESSAGE, icon2);
+                        current.setForeground(Color.red.darker());
+                        Toolkit.getDefaultToolkit().beep();
+                        JOptionPane.showMessageDialog(null, "Connection Failed\nPlease Exit the System and Start\nThe Database Application Manually", "Database Notification", JOptionPane.ERROR_MESSAGE, icon2);
+                        //startdb.stopXampp();
                         System.exit(0);
                     }
 
                 } catch (SQLException e) {
-//                    notify.setVisible(false);
-//                    notify2.setVisible(false);
-//                    notify3.setVisible(false);
-//                    notify4.setVisible(true);
-                    notify4.setForeground(Color.red);
-                    JOptionPane.showMessageDialog(null, "Connection Failure", "Error Message", JOptionPane.ERROR_MESSAGE, icon2);
+                    current.setForeground(Color.red.darker());
+                    Toolkit.getDefaultToolkit().beep();
+                    JOptionPane.showMessageDialog(null, "Connection Failed\nPlease Exit the System and Start\nThe Database Application Manually", "Database Notification", JOptionPane.ERROR_MESSAGE, icon2);
+                    startdb.stopXampp();
                     System.exit(0);
                 }
             }
